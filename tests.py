@@ -21,7 +21,7 @@ class TestImport(TestCase):
         self.assertEqual(linkage.cross_validation_sets(self.json, 0.75), self.sets)
 
 
-class TestParsing(TestCase):
+class TestParsingAndAnalysis(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.product_json = [{u'product_name': u'Canon_PowerShot_S20', u'manufacturer': u'Canon',
@@ -33,9 +33,13 @@ class TestParsing(TestCase):
         cls.listing_tags = [{u'name_tags': [u'Optical', u'w/', u'2x', u'PowerShot', u'Canon', u'3.2MP', u'Zoom', u'S20',
                                             u'Camera', u'Digital'],
                              u'manufacturer_tags': [u'Canon', u'USA']}]
+        cls.matches = {0: [0]}
         
     def test_parse_products(self):
         self.assertEqual(linkage.parse_products(self.product_json), self.product_tags)
 
     def test_parse_listings(self):
         self.assertEqual(linkage.parse_listings(self.listing_json), self.listing_tags)
+
+    def test_matching_product_words(self):
+        self.assertEqual(linkage.matching_product_words(self.product_tags, self.listing_tags, 2), self.matches)
