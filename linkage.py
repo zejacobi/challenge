@@ -4,7 +4,9 @@ import random
 import math
 import re
 
+### Global Settings ###
 random.seed(1)
+THRESHOLD = 2.0
 
 
 ### Functions ###
@@ -91,6 +93,12 @@ def matching_product_words(product_tags, listings_tags, threshold):
 
 
 def associate_records(matches, products_data, listings_data):
+    """
+    :param dict matches:
+    :param list products_data:
+    :param list listings_data:
+    :rtype: str
+    """
     return '\n'.join([json.dumps({u'product_name': products_data[match][u'product_name'],
                                   u'listings': [listings_data[listings_match] for listings_match in matches[match]]})
                      for match in matches])
@@ -107,12 +115,11 @@ if __name__ == '__main__':
     listings = import_json_file(args.listings)
     products = import_json_file(args.products)
 
-    products_train, products_test = cross_validation_sets(products, 0.7)
-
-    products_train_dict = parse_products(products_train)
+    products_dict = parse_products(products)
     listings_dict = parse_listings(listings)
 
-    matches = matching_product_words(products_train_dict, listings_dict, 1.5)
-    print associate_records(matches, products_train, listings)
+    product_listing_associations = matching_product_words(products_dict, listings_dict, THRESHOLD)
+    with open('output.txt', 'w') as out_file:
+        out_file.write(associate_records(product_listing_associations, products, listings))
 
 
